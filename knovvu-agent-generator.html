@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knovvu Ivanti ITSM Agent Generator</title>
+    <title>FDS Ivanti ITSM Agent Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -612,9 +612,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="header-badge">🤖 Marketplace Ready</div>
+            <div class="header-badge">FDS</div>
             <h1>Knovvu × Ivanti ITSM<br>Agent Generator</h1>
-            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM. No middleware required.
+            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM.
             </p>
         </div>
 
@@ -1093,7 +1093,7 @@ RULES:
             const tool_CreateTicket = {
                 Name: "IVANTI_CREATE_TICKET", Description: "Creates a new incident ticket in Ivanti ITSM. Returns the incident number. Only call this after KB search fails to resolve the issue and user confirms they want to create a ticket.",
                 Type: 0, Strict: true, Status: 1,
-                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", "Category": "', { param: "category" }, '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
                 AiAgentToolParameters: [
                     { Name: "subject", Description: "Short summary of the issue in plain text. Maximum 100 characters. NEVER use quotation marks or special characters. Example: VPN connection failing", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "subject" },
                     { Name: "description", Description: "Detailed description of the issue in plain text. NEVER use quotation marks, double quotes, backslashes, or newlines. Use only letters, numbers, spaces, commas, periods, and hyphens. Example: User reports VPN is not connecting. Error message says network unavailable.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "description" },
@@ -1203,5 +1203,6 @@ RULES:
         init();
     </script>
 </body>
+
 
 </html>
