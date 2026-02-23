@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knovvu Ivanti ITSM Agent Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2332;
+            --bg-input: #0d1321;
+            --border: #1e293b;
+            --border-focus: #6366f1;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.12), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(16, 185, 129, 0.08), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-light);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f1f5f9 0%, #6366f1 50%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Steps */
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dim);
+            background: transparent;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
+        .step.done {
+            color: var(--success);
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            border: 2px solid currentColor;
+        }
+
+        .step.done .step-num {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+        }
+
+        .step.active .step-num {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .step-arrow {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            font-size: 22px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Categories */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .cat-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .cat-chip:hover {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .cat-chip input {
+            accent-color: var(--accent);
+        }
+
+        .cat-chip.checked {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .add-category {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .add-category input {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .add-category input:focus {
+            border-color: var(--border-focus);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            justify-content: flex-end;
+        }
+
+        /* Preview */
+        .preview-panel {
+            display: none;
+        }
+
+        .preview-panel.visible {
+            display: block;
+        }
+
+        .preview-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .tools-list {
+            margin-top: 16px;
+        }
+
+        .tool-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .tool-name {
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-light);
+        }
+
+        .tool-method {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-method.get {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .tool-method.post {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .tool-params {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* JSON Preview */
+        .json-preview {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 16px;
+        }
+
+        /* Success */
+        .success-panel {
+            display: none;
+        }
+
+        .success-panel.visible {
+            display: block;
+        }
+
+        .success-icon {
+            text-align: center;
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .success-message {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .success-message h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .success-message p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .next-steps {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .next-steps h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .next-steps ol {
+            padding-left: 20px;
+        }
+
+        .next-steps li {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .next-steps li strong {
+            color: var(--text);
+        }
+
+        /* Validation */
+        .form-group.error input {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        }
+
+        .error-text {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .error-text {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .steps {
+                flex-wrap: wrap;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-badge">🤖 Marketplace Ready</div>
+            <h1>Knovvu × Ivanti ITSM<br>Agent Generator</h1>
+            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM. No middleware required.
+            </p>
+        </div>
+
+        <!-- Steps -->
+        <div class="steps" id="steps">
+            <div class="step active" data-step="1">
+                <span class="step-num">1</span>
+                Configure
+            </div>
+            <span class="step-arrow">→</span>
+            <div class="step" data-step="2">
+                <span class="step-num">2</span>
+                Preview
+            </div>
+            <span class="step-arrow">→</span>
+            <div class="step" data-step="3">
+                <span class="step-num">3</span>
+                Download
+            </div>
+        </div>
+
+        <!-- Step 1: Configure -->
+        <div id="configPanel">
+            <!-- Connection Card -->
+            <div class="card">
+                <div class="card-title"><span class="icon">🔗</span> Ivanti Connection</div>
+                <div class="card-desc">Enter your Ivanti ITSM instance URL and REST API key</div>
+
+                <div class="form-group" id="grpUrl">
+                    <label>Ivanti Base URL <span class="required">*</span></label>
+                    <input type="url" id="ivantiUrl" placeholder="https://yourcompany.trysaasiteu.com" value="">
+                    <span class="error-text">Please enter a valid URL (starting with https://)</span>
+                    <div class="hint">Your Ivanti ITSM instance URL without trailing slash</div>
+                </div>
+
+                <div class="form-group" id="grpKey">
+                    <label>REST API Key <span class="required">*</span></label>
+                    <input type="text" id="apiKey" placeholder="A06EACEBE14C41F6869CD0943627F5B3" value="">
+                    <span class="error-text">API key is required</span>
+                    <div class="hint">Found in Ivanti → Settings → REST API → API Keys</div>
+                </div>
+            </div>
+
+            <!-- Agent Config Card -->
+            <div class="card">
+                <div class="card-title"><span class="icon">⚙️</span> Agent Settings</div>
+                <div class="card-desc">Customize the agent name and behavior</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Agent Name</label>
+                        <input type="text" id="agentName" placeholder="ITSM_Assistant" value="ITSM_Assistant">
+                        <div class="hint">Display name shown in Knovvu</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Default Priority</label>
+                        <select id="defaultPriority">
+                            <option value="3" selected>3 — Medium (Recommended)</option>
+                            <option value="1">1 — Critical</option>
+                            <option value="2">2 — High</option>
+                            <option value="4">4 — Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Card -->
+            <div class="card">
+                <div class="card-title"><span class="icon">📂</span> Ticket Categories</div>
+                <div class="card-desc">Select which ITIL V4 categories the agent should use. Uncheck any that don't
+                    apply to your organization.</div>
+
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="add-category">
+                    <input type="text" id="newCategory" placeholder="Add custom category..."
+                        onkeydown="if(event.key==='Enter')addCategory()">
+                    <button class="btn btn-secondary btn-sm" onclick="addCategory()">+ Add</button>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="generatePreview()">
+                    Generate Preview →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Preview -->
+        <div class="preview-panel" id="previewPanel">
+            <div class="card">
+                <div class="card-title"><span class="icon">📊</span> Export Preview</div>
+                <div class="card-desc">Review your agent configuration before downloading</div>
+
+                <div class="preview-stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="statTools">5</div>
+                        <div class="stat-label">API Tools</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="statSize">—</div>
+                        <div class="stat-label">File Size (KB)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="statCats">—</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted);">🔧 Tools Included</h4>
+                <div class="tools-list">
+                    <div class="tool-item">
+                        <div>
+                            <div class="tool-name">IVANTI_KB</div>
+                            <div class="tool-params">Params: query</div>
+                        </div>
+                        <span class="tool-method get">GET</span>
+                    </div>
+                    <div class="tool-item">
+                        <div>
+                            <div class="tool-name">IVANTI_CREATE_TICKET</div>
+                            <div class="tool-params">Params: subject, description, category, priority, email,
+                                profileRecId</div>
+                        </div>
+                        <span class="tool-method post">POST</span>
+                    </div>
+                    <div class="tool-item">
+                        <div>
+                            <div class="tool-name">IVANTI_TICKET_STATUS</div>
+                            <div class="tool-params">Params: ticketNumber</div>
+                        </div>
+                        <span class="tool-method get">GET</span>
+                    </div>
+                    <div class="tool-item">
+                        <div>
+                            <div class="tool-name">IVANTI_CUSTOMER_LOOKUP</div>
+                            <div class="tool-params">Params: email</div>
+                        </div>
+                        <span class="tool-method get">GET</span>
+                    </div>
+                    <div class="tool-item">
+                        <div>
+                            <div class="tool-name">IVANTI_CREATE_EMPLOYEE</div>
+                            <div class="tool-params">Params: firstName, lastName, email, phone</div>
+                        </div>
+                        <span class="tool-method post">POST</span>
+                    </div>
+                </div>
+
+                <details style="margin-top: 20px;">
+                    <summary style="cursor: pointer; color: var(--text-dim); font-size: 13px;">Show Raw JSON (first 200
+                        lines)</summary>
+                    <div class="json-preview" id="jsonPreview"></div>
+                </details>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goBack()">← Back</button>
+                <button class="btn btn-success" onclick="downloadExport()">
+                    ⬇️ Download Agent Export
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div class="success-panel" id="successPanel">
+            <div class="card" style="text-align: center; padding: 48px 32px;">
+                <div class="success-icon">🎉</div>
+                <div class="success-message">
+                    <h2>Agent Export Ready!</h2>
+                    <p>Your Knovvu × Ivanti ITSM agent has been downloaded.</p>
+                </div>
+
+                <div class="next-steps" style="text-align: left;">
+                    <h3>📋 Next Steps</h3>
+                    <ol>
+                        <li>Open <strong>Sestek Knovvu Studio</strong></li>
+                        <li>Navigate to <strong>AI Agents → Import</strong></li>
+                        <li>Upload the downloaded <strong>ITSM_Direct_Agent_Export.json</strong> file</li>
+                        <li>Test the agent by sending: <strong>"My VPN is not working"</strong></li>
+                        <li>Verify the agent searches KB, analyzes the issue, and offers ticket creation</li>
+                    </ol>
+                </div>
+
+                <div class="btn-group" style="justify-content: center; margin-top: 32px;">
+                    <button class="btn btn-secondary" onclick="resetWizard()">🔄 Generate Another</button>
+                    <button class="btn btn-success" onclick="downloadExport()">⬇️ Download Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Default Categories ─────────────────────────────
+        const DEFAULT_CATEGORIES = [
+            'Hardware', 'Software', 'Software Request', 'Network',
+            'Access', 'Email', 'Telephony', 'Printing',
+            'Security', 'Database', 'General'
+        ];
+
+        let categories = [...DEFAULT_CATEGORIES];
+        let generatedJson = null;
+
+        // ─── Initialize ─────────────────────────────────────
+        function init() {
+            renderCategories();
+        }
+
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = categories.map((cat, i) => `
+        <label class="cat-chip checked" id="chip-${i}">
+            <input type="checkbox" checked onchange="toggleChip(${i}, this.checked)">
+            ${cat}
+        </label>
+    `).join('');
+        }
+
+        function toggleChip(i, checked) {
+            const chip = document.getElementById(`chip-${i}`);
+            chip.classList.toggle('checked', checked);
+        }
+
+        function addCategory() {
+            const input = document.getElementById('newCategory');
+            const val = input.value.trim();
+            if (val && !categories.includes(val)) {
+                categories.push(val);
+                renderCategories();
+                input.value = '';
+            }
+        }
+
+        function getSelectedCategories() {
+            const chips = document.querySelectorAll('.cat-chip input');
+            return categories.filter((_, i) => chips[i]?.checked);
+        }
+
+        // ─── Validation ─────────────────────────────────────
+        function validate() {
+            let valid = true;
+            const url = document.getElementById('ivantiUrl').value.trim();
+            const key = document.getElementById('apiKey').value.trim();
+
+            document.getElementById('grpUrl').classList.remove('error');
+            document.getElementById('grpKey').classList.remove('error');
+
+            if (!url || !url.startsWith('https://')) {
+                document.getElementById('grpUrl').classList.add('error');
+                valid = false;
+            }
+            if (!key) {
+                document.getElementById('grpKey').classList.add('error');
+                valid = false;
+            }
+            return valid;
+        }
+
+        // ─── Step Navigation ────────────────────────────────
+        function setStep(n) {
+            document.querySelectorAll('.step').forEach(s => {
+                const sn = parseInt(s.dataset.step);
+                s.classList.remove('active', 'done');
+                if (sn < n) s.classList.add('done');
+                if (sn === n) s.classList.add('active');
+            });
+        }
+
+        function goBack() {
+            setStep(1);
+            document.getElementById('previewPanel').classList.remove('visible');
+            document.getElementById('configPanel').style.display = 'block';
+        }
+
+        function resetWizard() {
+            setStep(1);
+            document.getElementById('successPanel').classList.remove('visible');
+            document.getElementById('configPanel').style.display = 'block';
+            generatedJson = null;
+        }
+
+        // ─── Knovvu Export Generator (Ported from Node.js) ──
+
+        function quill(parts) {
+            const ops = parts.map(p => {
+                if (typeof p === 'string') return { insert: p };
+                if (p.param) return { insert: { mention: { key: p.param, value: p.param, type: "aiAgentToolParameter", denotationChar: "" } } };
+                if (p.custom) return { insert: { mention: { key: p.custom, value: p.custom, type: "custom", denotationChar: "" } } };
+            });
+            return JSON.stringify({ ops });
+        }
+
+        function makeHeaders(authValue) {
+            return JSON.stringify([{
+                key: "Authorization",
+                value: quill([authValue]),
+                isRequired: true
+            }]);
+        }
+
+        function makeContent(parts) {
+            return JSON.stringify({
+                applicationContent: parts ? quill(parts) : "",
+                formDataContent: [{ type: "", key: "", value: "", isTouched: false }]
+            });
+        }
+
+        function makeEmptyContent() {
+            return JSON.stringify({
+                applicationContent: "",
+                formDataContent: [{ type: "", key: "", value: "" }]
+            });
+        }
+
+        function buildFlowJson(method, urlParts, headerAuth, contentParts) {
+            const flow = {
+                paletteVersion: "2.18",
+                position: "-347.8083814053338,-165.94855775062652",
+                scale: 1,
+                flowType: 6,
+                class: "GraphLinksModel",
+                nodeCategoryProperty: "node",
+                linkFromPortIdProperty: "fromPort",
+                linkToPortIdProperty: "toPort",
+                nodeDataArray: [
+                    {
+                        isValid: true,
+                        typeId: "06908895-80e6-4836-8b79-9001564198ea",
+                        category: "node", channels: [], name: "start", displayName: "Start",
+                        inputs: [],
+                        inputRules: [{ name: "in", portId: "in" }],
+                        outputRules: [{ name: "out", portId: "out" }],
+                        outputs: [], order: 18, description: "Description",
+                        isActionNodeOnly: false, isFlowNodeOnly: false, hasResponseCode: false,
+                        showChannels: false, isObsolete: false, isEnabled: true,
+                        key: -10, loc: "148.84396892339413 22.26806998405427"
+                    },
+                    {
+                        isValid: true,
+                        typeId: "ef185877-5276-46c9-a0df-d24678f2174a",
+                        category: "node", channels: [], name: "http", displayName: "HTTP",
+                        inputs: [
+                            { typeId: "d5d6bbd5-5d0c-4a3f-99d3-1dbff5a12e3d", name: "headers", order: 4, isMandatory: false, description: "headers", value: makeHeaders(headerAuth), placeholder: "", action: "ExtensibleDynamic", type: "text", step: -1, range: [], options: ["Accept", "Accept-Charset", "Accept-Encoding", "Accept-Language", "Authorization", "Cache-Control", "Connection", "Connection-Close", "Date", "Expect", "Expect-Continue", "From", "Host", "If-Match", "If-Modified-Since", "If-None-Match", "If-Range", "If-Unmodified-Since", "Max-Forwards", "Origin", "Pragma", "Proxy-Authorization", "Range", "Referer", "TE", "Trailer", "Transfer-Encoding", "Transfer-Encoding-Chunked", "User-Agent", "Upgrade", "Via", "Warning"], tooltip: "", col: 12, fieldType: "select", extraProperties: "", groupName: null },
+                            { typeId: "68c890b0-5caf-468c-8f30-7f9b306faf3f", name: "url", order: 1, isMandatory: true, description: "url", value: quill(urlParts), placeholder: "HttpPrefix", action: "Expression", type: "text", step: -1, range: [], options: [], tooltip: "", col: 8, fieldType: "input", extraProperties: "", groupName: null },
+                            { typeId: "ac538b67-6de6-42c2-877f-90d41094c1e9", name: "serviceResponseTimeoutDuration", order: 14, isMandatory: false, description: "serviceResponseTimeoutDuration", value: "30", placeholder: "", action: "Standard", type: "number", step: 1, range: [1, 600], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: "AdvancedSettings" },
+                            { typeId: "81c3c828-3cf1-4ad9-a210-eff49d8ada41", name: "retryCount", order: 10, isMandatory: false, description: "retryCount", value: "1", placeholder: "", action: "Standard", type: "number", step: 1, range: [0, 10], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: "AdvancedSettings" },
+                            { typeId: "356081ab-3f29-4009-81e3-7270404508e3", name: "ignoredHttpErrorStatusCode", order: 16, isMandatory: false, description: "Define specific xxx status codes as successful responses and route them through the 'out' port of the HTTP node.", value: "\"\"", placeholder: "IgnoredHttpErrorStatusCodePlaceholder", action: "Standard", type: "text", step: -1, range: [100, 599], options: [], tooltip: "IgnoredHttpErrorStatusCodeTooltip", col: 12, fieldType: "tagInput", extraProperties: "", groupName: "AdvancedSettings" },
+                            { typeId: "51e7bc07-0ad7-4d0e-921d-4bf88e7f4225", name: "durationBetweenRequests", order: 12, isMandatory: false, description: "durationBetweenRequests", value: "20", placeholder: "", action: "Standard", type: "number", step: 1, range: [1, 600], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: "AdvancedSettings" },
+                            { typeId: "3e6ae684-ac9f-4639-a674-e4c6daf07285", name: "content", order: 3, isMandatory: false, description: "content", value: contentParts ? makeContent(contentParts) : makeEmptyContent(), placeholder: "", action: "httpContent", type: "text", step: -1, range: [], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: null },
+                            { typeId: "d893fc8c-7e12-416c-b32d-351570506da6", name: "contentType", order: 2, isMandatory: true, description: "contentType", value: "application/json", placeholder: "", action: "Standard", type: "text", step: -1, range: [], options: ["form-data", "application/json", "application/octet-stream", "application/xml", "application/x-www-form-urlencoded", "application/ssml+xml"], tooltip: "", col: 12, fieldType: "select", extraProperties: "", groupName: null },
+                            { typeId: "92a629ef-130a-4838-a7d4-2aee76035d9a", name: "method", order: 0, isMandatory: true, description: "method", value: method, placeholder: "", action: "Standard", type: "text", step: -1, range: [], options: ["GET", "POST", "PUT", "PATCH", "DELETE"], tooltip: "", col: 4, fieldType: "select", extraProperties: "", groupName: null },
+                            { typeId: "9c1a8e54-1c0a-4f0d-9f9f-2d7f1f2a0a1b", name: "executeAsynchronously", order: 18, isMandatory: false, description: "executeAsynchronously", value: "false", placeholder: "", action: "Standard", type: "checkbox", step: -1, range: [], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: "AdvancedSettings" }
+                        ],
+                        inputRules: [{ name: "in", portId: "in" }],
+                        outputRules: [{ name: "out", portId: "out" }, { name: "failed", portId: "failed" }],
+                        outputs: [
+                            { typeId: "e24334ee-5ec5-4a4f-bd0f-d24a18a8c49a", name: "responseStatusCode", order: 0, isMandatory: false, description: "responseStatusCode", value: "", placeholder: "", action: "Standard", type: "text", step: -1, range: [], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: "AdvancedSettings" },
+                            { typeId: "e580e471-ef89-47a7-8720-41e2f1605e38", name: "responseContent", order: 0, isMandatory: true, description: "responseContent", value: "toolResponse", placeholder: "", action: "Standard", type: "text", step: -1, range: [], options: [], tooltip: "HttpNodeResponseContentTooltip", col: 12, fieldType: "input", extraProperties: "", groupName: null }
+                        ],
+                        order: 6, description: "HTTP",
+                        isActionNodeOnly: false, isFlowNodeOnly: false, hasResponseCode: false,
+                        showChannels: false, isObsolete: false, isEnabled: true,
+                        key: -6, loc: "149.51780637676944 181.80151824677353"
+                    },
+                    {
+                        isValid: true,
+                        typeId: "e7b06b86-b586-4d18-abf2-add87f2086e6",
+                        category: "node", channels: [], name: "endWithResult", displayName: "End With Result",
+                        inputs: [{
+                            typeId: "c5506b5c-c8b4-40e4-a02b-5f8f6aa86c92", name: "result", order: 0, isMandatory: true, description: "result",
+                            value: JSON.stringify({ ops: [{ insert: { mention: { key: "toolResponse", value: "toolResponse", type: "custom", denotationChar: "" } } }, { insert: "" }] }),
+                            placeholder: "EndWithResultNodeResultInputPlaceholder", action: "ExpressionWithSpace", type: "text", step: -1, range: [], options: [], tooltip: "", col: 12, fieldType: "input", extraProperties: "", groupName: null
+                        }],
+                        inputRules: [{ name: "in", portId: "in" }],
+                        outputRules: [{ name: "out", portId: "out" }],
+                        outputs: [], order: 27, description: "End With Result",
+                        isActionNodeOnly: false, isFlowNodeOnly: false, hasResponseCode: false,
+                        showChannels: false, isObsolete: false, isEnabled: true,
+                        key: -21, loc: "148.79674909068171 311.8888024364074"
+                    }
+                ],
+                linkDataArray: [
+                    { from: -10, to: -6, fromPort: "out", toPort: "in", points: [147.84396892339413, 45.01806998405427, 147.84396892339413, 105.01806998405428, 148.51780637676944, 93.80151824677353, 148.51780637676944, 153.80151824677353] },
+                    { from: -6, to: -21, fromPort: "out", toPort: "in", points: [142.51780637676944, 209.80151824677353, 142.51780637676944, 269.8015182467735, 147.79674909068171, 229.1388024364074, 147.79674909068171, 289.1388024364074] },
+                    { from: -6, to: -21, fromPort: "failed", toPort: "in", points: [154.51780637676944, 209.80151824677353, 154.51780637676944, 269.8015182467735, 147.79674909068171, 229.1388024364074, 147.79674909068171, 289.1388024364074] }
+                ]
+            };
+            return JSON.stringify(flow);
+        }
+
+        // ─── Build Agent Export ─────────────────────────────
+        function buildExport(config) {
+            const BASE = config.url;
+            const AUTH = `rest_api_key=${config.apikey}`;
+            const selectedCats = config.categories;
+
+            const catList = selectedCats.map(c => `- ${c}`).join('\n');
+
+            const instructions = `You are an Ivanti ITSM AI Assistant connected directly to Ivanti REST APIs.
+You are also an intelligent issue analysis engine.
+
+Your mission:
+1. Analyze user issues intelligently (category, priority, sentiment, language).
+2. Always attempt Knowledge Base resolution first.
+3. Only create incidents if knowledge does not resolve the issue.
+4. Handle password reset requests with dedicated workflow.
+5. Provide ticket status when requested.
+6. Never fabricate incident numbers or knowledge articles.
+7. Always rely on API responses.
+
+AVAILABLE CATEGORIES (ITIL V4 Standard):
+Use ONLY these categories when creating tickets. Pick the closest match:
+${catList}
+
+WORKFLOW:
+
+If user describes an issue:
+1. YOU must analyze the issue yourself. Determine:
+   - Language: detect the language (English, Arabic, French, etc.)
+   - Category: pick the CLOSEST MATCH from the AVAILABLE CATEGORIES list above
+   - Priority: Critical, High, Medium, or Low based on urgency and impact
+   - Sentiment: Frustrated, Concerned, Neutral, or Calm based on tone
+2. Present your analysis to the user:
+   "🔍 AI Analysis:
+   - Language: [detected language]
+   - Category: [matched category from list]
+   - Priority: [priority level]
+   - Sentiment: [sentiment]"
+3. If the issue is about PASSWORD RESET:
+   → Ask for the user's email address
+   → Call IVANTI_CUSTOMER_LOOKUP with their email
+   → If found: use IVANTI_CREATE_TICKET with category Access, priority 1 (Critical), subject Password Reset Request
+   → Present the ticket number to the user
+   → End with: "Your password reset request has been submitted. The IT team will contact you shortly."
+4. Otherwise, extract keywords and call IVANTI_KB to search knowledge base.
+5. Present articles with titles and summaries from the response.
+6. Ask user: "Did any of these articles help solve your issue?"
+
+If resolved → end politely with "Glad I could help!"
+If not resolved:
+  → Ask for their email address
+  → Call IVANTI_CUSTOMER_LOOKUP with their email
+  → If employee found (value array not empty): use their RecId and DisplayName
+  → If not found (value array empty): ask first name and last name, then call IVANTI_CREATE_EMPLOYEE
+  → Confirm the ticket details with the user before creating
+  → Use the MATCHED category from the AVAILABLE CATEGORIES list and the priority from your analysis
+  → Call IVANTI_CREATE_TICKET with: subject, description, category, priority, email, and profileRecId
+
+If user asks for ticket status:
+  → Call IVANTI_TICKET_STATUS with the ticket number immediately
+  → Present: IncidentNumber, Status, Subject, Priority, CreatedDateTime
+
+RULES:
+- ALWAYS analyze the issue yourself first (language, category, priority, sentiment)
+- ONLY use categories from the AVAILABLE CATEGORIES list above
+- For password reset issues, use category Access and priority 1
+- Always confirm before creating incidents
+- Keep responses concise and professional
+- Respond in user's language if detected (Arabic, English, etc.)
+- If IVANTI_KB returns empty value array, say "No articles found" and offer ticket creation
+- When presenting KB articles, show the Title and Summary/Description
+- Use priority values: 1 (Critical), 2 (High), 3 (Medium), 4 (Low)
+- Default priority is ${config.priority} (${['', 'Critical', 'High', 'Medium', 'Low'][config.priority]}) if user doesn't specify urgency
+- Never ask for ProfileLink_RecID from the user, get it from IVANTI_CUSTOMER_LOOKUP`;
+
+            // Tools
+            const tool_KB = {
+                Name: "IVANTI_KB", Description: "Searches Ivanti Knowledge Base for articles matching user keywords. Returns title, summary, and category. Call this FIRST when user describes an issue.",
+                Type: 0, Strict: true, Status: 1,
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("GET", [`${BASE}/api/odata/businessobject/FRS_Knowledges?$select=RecId,Title,Details,DisplayText,Status,Category,Subcategory&$top=5&$search=`, { param: "query" }], AUTH, null), Parameters: null },
+                AiAgentToolParameters: [{ Name: "query", Description: "A single keyword extracted from the user question. MUST be a simple word with NO special characters, NO quotes, NO apostrophes. Examples: vpn, printer, email, outlook, wifi, password.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "query" }]
+            };
+
+            const tool_CreateTicket = {
+                Name: "IVANTI_CREATE_TICKET", Description: "Creates a new incident ticket in Ivanti ITSM. Returns the incident number. Only call this after KB search fails to resolve the issue and user confirms they want to create a ticket.",
+                Type: 0, Strict: true, Status: 1,
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", "Category": "', { param: "category" }, '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
+                AiAgentToolParameters: [
+                    { Name: "subject", Description: "Short summary of the issue in plain text. Maximum 100 characters. NEVER use quotation marks or special characters. Example: VPN connection failing", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "subject" },
+                    { Name: "description", Description: "Detailed description of the issue in plain text. NEVER use quotation marks, double quotes, backslashes, or newlines. Use only letters, numbers, spaces, commas, periods, and hyphens. Example: User reports VPN is not connecting. Error message says network unavailable.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "description" },
+                    { Name: "category", Description: "Issue category. Must be exactly one of: " + selectedCats.join(", "), Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "category" },
+                    { Name: "priority", Description: "Priority number only. Must be exactly one of: 1, 2, 3, 4. Default is " + config.priority + ".", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "priority" },
+                    { Name: "email", Description: "The user email address. Must be a valid email. Example: user@company.com", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "email" },
+                    { Name: "profileRecId", Description: "The RecId value from IVANTI_CUSTOMER_LOOKUP response. Copy the exact RecId string. Use empty string if not found.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "profileRecId" }
+                ]
+            };
+
+            const tool_TicketStatus = {
+                Name: "IVANTI_TICKET_STATUS", Description: "Gets the current status of an existing ticket by incident number. Call this when user asks to check ticket status.",
+                Type: 0, Strict: true, Status: 1,
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("GET", [`${BASE}/api/odata/businessobject/incidents?$filter=IncidentNumber eq `, { param: "ticketNumber" }, "&$select=RecId,IncidentNumber,Subject,Status,Priority,CreatedDateTime,LastModDateTime"], AUTH, null), Parameters: null },
+                AiAgentToolParameters: [{ Name: "ticketNumber", Description: "The incident/ticket number to look up. Example: 10234", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "ticketNumber" }]
+            };
+
+            const tool_CustomerLookup = {
+                Name: "IVANTI_CUSTOMER_LOOKUP", Description: "Looks up an employee in Ivanti ITSM by email address. Returns RecId and DisplayName if found. Call this before creating a ticket to link the correct employee profile.",
+                Type: 0, Strict: true, Status: 1,
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("GET", [`${BASE}/api/odata/businessobject/employees?$filter=PrimaryEmail eq '`, { param: "email" }, "'&$select=RecId,DisplayName,PrimaryEmail,LoginId&$top=1"], AUTH, null), Parameters: null },
+                AiAgentToolParameters: [{ Name: "email", Description: "The user's email address to search for in Ivanti employee directory.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "email" }]
+            };
+
+            const tool_CreateEmployee = {
+                Name: "IVANTI_CREATE_EMPLOYEE", Description: "Creates a new employee profile in Ivanti ITSM. Call this only if IVANTI_CUSTOMER_LOOKUP returns empty results and user wants to create a profile for ticket tracking.",
+                Type: 0, Strict: true, Status: 1,
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/employees`], AUTH, ['{"FirstName": "', { param: "firstName" }, '", "LastName": "', { param: "lastName" }, '", "PrimaryEmail": "', { param: "email" }, '", "PrimaryPhone": "', { param: "phone" }, '", "Department": "General", "Status": "Active"}']), Parameters: null },
+                AiAgentToolParameters: [
+                    { Name: "firstName", Description: "The user's first name.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "firstName" },
+                    { Name: "lastName", Description: "The user's last name.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "lastName" },
+                    { Name: "email", Description: "The user's email address.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "email" },
+                    { Name: "phone", Description: "The user's phone number. Use empty string if not provided.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "phone" }
+                ]
+            };
+
+            return {
+                Name: config.name,
+                OriginalName: config.name,
+                Description: "AI agent connected directly to Ivanti ITSM REST API. Searches Knowledge Base, creates tickets, checks status, and manages employee profiles. No middleware required. Marketplace ready.",
+                Instructions: instructions,
+                AvoidHarmfulOrUnethicalContent: true,
+                StayGroundedToVerifiedInformation: true,
+                DetectAndBlockJailbreakAttempts: true,
+                MaintainOutputConsistency: true,
+                CollaborationMode: 0,
+                Persona: 3,
+                ResponseDetailLevel: 0,
+                CreativityLevel: 0,
+                AiAgentSubAgents: [],
+                AiAgentTools: [tool_KB, tool_CreateTicket, tool_TicketStatus, tool_CustomerLookup, tool_CreateEmployee],
+                AvatarMetadata: null,
+                Avatar: null
+            };
+        }
+
+        // ─── Actions ────────────────────────────────────────
+        function generatePreview() {
+            if (!validate()) return;
+
+            const config = {
+                url: document.getElementById('ivantiUrl').value.trim().replace(/\/$/, ''),
+                apikey: document.getElementById('apiKey').value.trim(),
+                name: document.getElementById('agentName').value.trim() || 'ITSM_Assistant',
+                priority: parseInt(document.getElementById('defaultPriority').value),
+                categories: getSelectedCategories()
+            };
+
+            if (config.categories.length === 0) {
+                alert('Please select at least one category.');
+                return;
+            }
+
+            generatedJson = JSON.stringify(buildExport(config), null, 2);
+
+            // Update stats
+            document.getElementById('statSize').textContent = (generatedJson.length / 1024).toFixed(1);
+            document.getElementById('statCats').textContent = config.categories.length;
+
+            // Show preview
+            document.getElementById('jsonPreview').textContent = generatedJson.substring(0, 5000) + (generatedJson.length > 5000 ? '\n...(truncated)' : '');
+
+            // Switch to preview
+            setStep(2);
+            document.getElementById('configPanel').style.display = 'none';
+            document.getElementById('previewPanel').classList.add('visible');
+        }
+
+        function downloadExport() {
+            if (!generatedJson) return;
+
+            const blob = new Blob([generatedJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ITSM_Direct_Agent_Export.json';
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // Switch to success
+            setStep(3);
+            document.getElementById('previewPanel').classList.remove('visible');
+            document.getElementById('successPanel').classList.add('visible');
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+
+</html>
