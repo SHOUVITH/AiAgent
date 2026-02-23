@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FDS Ivanti ITSM Agent Generator</title>
+    <title>Knovvu Ivanti ITSM Agent Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
@@ -612,9 +612,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="header-badge">🤖FDS AI</div>
-            <h1>Knovvu × Ivanti ITSM<br>Agent Generator From FDS</h1>
-            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM. No middleware required.
+            <div class="header-badge">🤖 FDS AI</div>
+            <h1>Knovvu × Ivanti ITSM<br>Agent Generator</h1>
+            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM From FDS.
             </p>
         </div>
 
@@ -1027,6 +1027,8 @@ Your mission:
 5. Provide ticket status when requested.
 6. Never fabricate incident numbers or knowledge articles.
 7. Always rely on API responses.
+8. If the user's issue is NOT in English (e.g., Arabic), the ticket description MUST include both the original text and an English translation.
+   Format: "[Original Language]: {text} \n English Translation: {translation}"
 
 AVAILABLE CATEGORIES (ITIL V4 Standard):
 Use ONLY these categories when creating tickets. Pick the closest match:
@@ -1102,7 +1104,7 @@ RULES:
                 Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", "Category": "', { param: "category" }, '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
                 AiAgentToolParameters: [
                     { Name: "subject", Description: "Short summary of the issue in plain text. Maximum 100 characters. NEVER use quotation marks or special characters. Example: VPN connection failing", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "subject" },
-                    { Name: "description", Description: "Detailed description of the issue in plain text. NEVER use quotation marks, double quotes, backslashes, or newlines. Use only letters, numbers, spaces, commas, periods, and hyphens. Example: User reports VPN is not connecting. Error message says network unavailable.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "description" },
+                    { Name: "description", Description: "Detailed description of the issue. Use only letters, numbers, spaces, commas, periods, and hyphens. IF INPUT IS NOT ENGLISH: Include both the original text and an English translation in this format: [Original]: {text} \n English: {translation}", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "description" },
                     { Name: "category", Description: "Issue category. Must be exactly one of: " + selectedCats.join(", "), Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "category" },
                     { Name: "priority", Description: "Priority number only. Must be exactly one of: 1, 2, 3, 4. Default is " + config.priority + ".", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "priority" },
                     { Name: "email", Description: "The user email address. Must be a valid email. Example: user@company.com", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "email" },
