@@ -612,9 +612,9 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="header-badge">FDS</div>
-            <h1>Knovvu × Ivanti ITSM<br>Agent Generator</h1>
-            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM.
+            <div class="header-badge">🤖FDS AI</div>
+            <h1>Knovvu × Ivanti ITSM<br>Agent Generator From FDS</h1>
+            <p>Generate a production-ready AI agent that connects directly to your Ivanti ITSM. No middleware required.
             </p>
         </div>
 
@@ -760,7 +760,8 @@
                     <div class="tool-item">
                         <div>
                             <div class="tool-name">IVANTI_CREATE_EMPLOYEE</div>
-                            <div class="tool-params">Params: firstName, lastName, email, phone</div>
+                            <div class="tool-params">Params: firstName, lastName, displayName, loginId, email, phone
+                            </div>
                         </div>
                         <span class="tool-method post">POST</span>
                     </div>
@@ -1060,7 +1061,12 @@ If not resolved:
   → Ask for their email address
   → Call IVANTI_CUSTOMER_LOOKUP with their email
   → If employee found (value array not empty): use their RecId and DisplayName
-  → If not found (value array empty): ask first name and last name, then call IVANTI_CREATE_EMPLOYEE
+  → If not found (value array empty): 
+      → Ask first name and last name.
+      → YOUR GOAL: Create an account.
+      → Generate 'displayName' as "[FirstName] [LastName]".
+      → Generate 'loginId' from email: take the part before "@", lowercase it, and replace any dots "." with underscores "_".
+      → Call IVANTI_CREATE_EMPLOYEE with: firstName, lastName, displayName, loginId, email, and phone.
   → Confirm the ticket details with the user before creating
   → Use the MATCHED category from the AVAILABLE CATEGORIES list and the priority from your analysis
   → Call IVANTI_CREATE_TICKET with: subject, description, category, priority, email, and profileRecId
@@ -1093,7 +1099,7 @@ RULES:
             const tool_CreateTicket = {
                 Name: "IVANTI_CREATE_TICKET", Description: "Creates a new incident ticket in Ivanti ITSM. Returns the incident number. Only call this after KB search fails to resolve the issue and user confirms they want to create a ticket.",
                 Type: 0, Strict: true, Status: 1,
-                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/incidents`], AUTH, ['{"Subject": "', { param: "subject" }, '", "Symptom": "', { param: "description" }, '", "Category": "', { param: "category" }, '", "Priority": "', { param: "priority" }, '", "Impact": "Medium", "Urgency": "Medium", "TypeOfIncident": "Incident", "Source": "Chat", "Status": "Logged", "Email": "', { param: "email" }, '", "ProfileLink_RecID": "', { param: "profileRecId" }, '", "ProfileLink_Category": "Employee"}']), Parameters: null },
                 AiAgentToolParameters: [
                     { Name: "subject", Description: "Short summary of the issue in plain text. Maximum 100 characters. NEVER use quotation marks or special characters. Example: VPN connection failing", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "subject" },
                     { Name: "description", Description: "Detailed description of the issue in plain text. NEVER use quotation marks, double quotes, backslashes, or newlines. Use only letters, numbers, spaces, commas, periods, and hyphens. Example: User reports VPN is not connecting. Error message says network unavailable.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "description" },
@@ -1121,10 +1127,12 @@ RULES:
             const tool_CreateEmployee = {
                 Name: "IVANTI_CREATE_EMPLOYEE", Description: "Creates a new employee profile in Ivanti ITSM. Call this only if IVANTI_CUSTOMER_LOOKUP returns empty results and user wants to create a profile for ticket tracking.",
                 Type: 0, Strict: true, Status: 1,
-                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/employees`], AUTH, ['{"FirstName": "', { param: "firstName" }, '", "LastName": "', { param: "lastName" }, '", "PrimaryEmail": "', { param: "email" }, '", "PrimaryPhone": "', { param: "phone" }, '", "Department": "General", "Status": "Active"}']), Parameters: null },
+                Flow: { FlowType: 6, Name: "Tool Flow", Json: buildFlowJson("POST", [`${BASE}/api/odata/businessobject/employees`], AUTH, ['{"FirstName": "', { param: "firstName" }, '", "LastName": "', { param: "lastName" }, '", "DisplayName": "', { param: "displayName" }, '", "LoginID": "', { param: "loginId" }, '", "PrimaryEmail": "', { param: "email" }, '", "PrimaryPhone": "', { param: "phone" }, '", "Status": "Active"}']), Parameters: null },
                 AiAgentToolParameters: [
                     { Name: "firstName", Description: "The user's first name.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "firstName" },
                     { Name: "lastName", Description: "The user's last name.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "lastName" },
+                    { Name: "displayName", Description: "The full name of the user (e.g. John Doe).", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "displayName" },
+                    { Name: "loginId", Description: "The system login ID derived from email (part before @, dots replaced by underscores). Example: john_doe", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "loginId" },
                     { Name: "email", Description: "The user's email address.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "email" },
                     { Name: "phone", Description: "The user's phone number. Use empty string if not provided.", Type: 0, EnumValues: [], IsRequired: true, AdditionalProperties: null, Path: "phone" }
                 ]
@@ -1203,6 +1211,5 @@ RULES:
         init();
     </script>
 </body>
-
 
 </html>
